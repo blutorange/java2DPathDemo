@@ -26,7 +26,8 @@ public class CurveToBuilder implements IPathBuilder {
 			p2 = null;
 			p3 = null;
 		}
-		set.add(new PathPoint(p1, getName()));
+		if (p1 != null) set.add(new PathPoint(p1, getName()));
+		if (p2 != null) set.add(new PathPoint(p2, getName()));
 	}
 	@Override
 	public boolean isFinished() {
