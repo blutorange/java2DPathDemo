@@ -83,6 +83,10 @@ class EditCanvas extends Canvas {
 						setMode(EMode.PATH_BUILD);
 					repaint();
 				}
+				else {
+					setMode(EMode.PATH_BUILD);
+					setMode(EMode.POINT_EDIT);
+				}
 			}
 
 			private void mouseLeft(final MouseEvent ev) {
