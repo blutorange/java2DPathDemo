@@ -84,6 +84,8 @@ class TimePanel extends JPanel {
 			canvas.addKeyFrame();
 		};
 		setTimeActionListener = (final ActionEvent actionEvent) -> {
+			if (list.getModel().getSize()==0)
+				return;
 			final String time = JOptionPane.showInputDialog(this, "Enter time"); //$NON-NLS-1$
 			if (time == null)
 				return;
