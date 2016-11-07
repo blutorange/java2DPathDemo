@@ -10,7 +10,7 @@ import de.homelab.madgaksha.cgca.path.IPathPoint;
 import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
 
 public class CurveToCommand implements IPathCommand {
-	private final float x1,y1,x2,y2,x3,y3;
+	private final IPathPoint p1,p2,p3; 
 	private final Set<IPathPoint> set = new HashSet<>(3);
 	public CurveToCommand(final Point p1, final Point p2, final Point p3) {
 		this(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
@@ -19,19 +19,16 @@ public class CurveToCommand implements IPathCommand {
 		this((float)x1,(float)y1,(float)x2,(float)y2,(float)x3,(float)y3);
 	}
 	public CurveToCommand(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
-		this.x1 = x1;
-		this.x2 = x2;
-		this.x3 = x3;
-		this.y1 = y1;
-		this.y2 = y2;
-		this.y3 = y3;
-		set.add(new PathPoint(x1, y1, getName()));
-		set.add(new PathPoint(x2, y2, getName()));
-		set.add(new PathPoint(x3, y3, getName()));
+		p1 = new PathPoint(x1, y1, getName());
+		p2 = new PathPoint(x2, y2, getName());
+		p3 = new PathPoint(x3, y3, getName());
+		set.add(p1);
+		set.add(p2);
+		set.add(p3);
 	}
 	@Override
 	public void apply(final GeneralPath path) {
-		path.curveTo(x1, y1, x2, y2, x3, y3);
+		path.curveTo(p1.getPointX(),p1.getPointY(),p2.getPointX(),p2.getPointY(),p3.getPointX(),p3.getPointY());
 	}
 	@Override
 	public String getName() {

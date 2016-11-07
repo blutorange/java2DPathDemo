@@ -38,6 +38,7 @@ public class MyFrame extends JFrame {
 		final JButton btnLineTo = new JButton("lineTo"); //$NON-NLS-1$
 		final JButton btnQuadTo = new JButton("quadTo"); //$NON-NLS-1$
 		final JButton btnCurveTo = new JButton("curveTo"); //$NON-NLS-1$
+		final JButton btnChange = new JButton("change"); //$NON-NLS-1$
 		final JCheckBox cbClose = new JCheckBox("close"); //$NON-NLS-1$
 		final JButton btnText = new JButton("Load texture..."); //$NON-NLS-1$
 		final JCheckBox cbFill = new JCheckBox("fill"); //$NON-NLS-1$
@@ -54,6 +55,7 @@ public class MyFrame extends JFrame {
 		panel.add(btnQuadTo);
 		panel.add(btnCurveTo);
 		panel.add(btnText);
+		panel.add(btnChange);
 		panel.add(cbClose);
 		panel.add(cbFill);
 		panel.add(selWRule);
@@ -61,6 +63,8 @@ public class MyFrame extends JFrame {
 		add(canvas, BorderLayout.CENTER);
 		add(panel, BorderLayout.NORTH);
 
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
 		btnClear.addActionListener((final ActionEvent actionEvent) -> {
 			canvas.clearPathList();
 		});
@@ -78,6 +82,9 @@ public class MyFrame extends JFrame {
 		});
 		btnText.addActionListener((final ActionEvent actionEvent) -> {
 			fcText.showOpenDialog(this);
+		});
+		btnChange.addActionListener((final ActionEvent actionEvent) -> {
+			canvas.setMode(EMode.POINT_EDIT);
 		});
 		fcText.addActionListener((final ActionEvent actionEvent) -> {
 			final Object source = actionEvent.getSource();

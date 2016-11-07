@@ -5,13 +5,14 @@ public interface IPathPoint {
 	public String getLabel();
 	public float getPointX();
 	public float getPointY();
+	public void setPoint(float x, float y);
 	@Override
 	public boolean equals(Object o);
 	@Override
 	public int hashCode();
 	public static class PathPoint implements IPathPoint {
 		private final String label;
-		private final float x,y;
+		private float x,y;
 		public PathPoint(final Point p, final String label) {
 			this((float)p.getX(), (float)p.getY(), label);
 		}
@@ -19,6 +20,10 @@ public interface IPathPoint {
 			this.x = x;
 			this.y = y;
 			this.label = label;
+		}
+		public void setPoint(float x, float y) {
+			this.x = x;
+			this.y = y;
 		}
 		@Override
 		public String getLabel() {

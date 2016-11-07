@@ -21,6 +21,7 @@ import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
 
 class CustomCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
+	private final static float POINT_RADIUS = 5f;
 	private Image dbImage;
 	private Graphics dbg;
 	private final List<IPathCommand> pathCommandList = new ArrayList<>();
@@ -29,6 +30,9 @@ class CustomCanvas extends Canvas {
 	private IPathBuilder pathBuilder;
 	private EWindingRule windingRule = EWindingRule.NON_ZERO;
 	private Paint paint;
+	private EMode mode = EMode.PATH_BUILD;
+	private IPathPoint selectedPoint;
+	private IPathCommand selectedPath;
 
 	public CustomCanvas() {
 		addComponentListener(new ComponentAdapter() {
@@ -42,7 +46,6 @@ class CustomCanvas extends Canvas {
 			public void mouseMoved(final MouseEvent ev) {
 				repaint();
 			}
-
 			@Override
 			public void mouseDragged(final MouseEvent ev) {
 			}
@@ -54,9 +57,61 @@ class CustomCanvas extends Canvas {
 
 			@Override
 			public void mousePressed(final MouseEvent ev) {
-				if (pathBuilder != null) {
-					pathBuilder.mouseClick(ev.getPoint());
-					checkBuilderState();
+				switch (ev.getButton()) {
+				case (MouseEvent.BUTTON1):
+					mouseLeft(ev);
+					break;
+				case (MouseEvent.BUTTON3):
+					mouseRight(ev);
+					break;
+				}
+			}
+
+			private void mouseRight(MouseEvent ev) {
+				switch (mode) {
+				case PATH_BUILD:
+					break;
+				case POINT_EDIT:
+					IPathPoint p = selectedPoint;
+					if (p == null)
+						p = getClosestNearMouse();
+					if (p != null && selectedPath != null) {
+						pathCommandList.remove(selectedPath);
+						selectedPath = null;
+						selectedPoint = null;
+						if (pathCommandList.isEmpty())
+							setMode(EMode.PATH_BUILD);
+						repaint();
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			private void mouseLeft(MouseEvent ev) {
+				switch (mode) {
+				case PATH_BUILD:
+					if (pathBuilder != null) {
+						pathBuilder.mouseClick(ev.getPoint());
+						checkBuilderState();
+					}
+					break;
+				case POINT_EDIT:
+					if (selectedPoint == null)
+						selectedPoint = getClosestNearMouse();
+					else {
+						Point p = getMousePosition();
+						if (p != null) {
+							selectedPoint.setPoint((float)p.getX(), (float)p.getY());
+							selectedPoint = null;
+							selectedPath = null;
+							repaint();
+						}
+					}
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -74,7 +129,28 @@ class CustomCanvas extends Canvas {
 		});
 	}
 
+	protected IPathPoint getClosestNearMouse() {
+		Point p = getMousePosition();
+		IPathPoint minP = null;
+		float minL = Float.MAX_VALUE;
+		if (p != null) {
+			for (IPathCommand pc : this.pathCommandList) {
+				for (IPathPoint pp : pc.getPathPointSet()) {
+					float x = pp.getPointX()-(float)p.getX();
+					float y = pp.getPointY()-(float)p.getY();
+					if (x*x+y*y < minL) {
+						selectedPath = pc;
+						minP = pp;
+						minL = x*x+y*y;
+					}
+				}
+			}
+		}
+		return minL < POINT_RADIUS*POINT_RADIUS*2 ? minP : null;
+	}
+
 	protected void checkBuilderState() {
+		setMode(EMode.PATH_BUILD);
 		if (pathBuilder != null && pathBuilder.isFinished()) {
 			pathCommandList.add(pathBuilder.build());
 			final IPathBuilder newPathBuilder = pathBuilder.getNew();
@@ -118,15 +194,20 @@ class CustomCanvas extends Canvas {
 
 	private void drawPoints(final Graphics2D g2d) {
 		final Point p = getMousePosition();
-		if (pathBuilder != null) {
-			if (p != null)
-				drawPathPoint(g2d, new PathPoint(p, pathBuilder.getName()));
-			for (final IPathPoint pp : pathBuilder.getPathPointSet())
-				drawPathPoint(g2d, pp);
-		}
+		final IPathPoint s = getClosestNearMouse();
 		for (final IPathCommand pc : pathCommandList)
 			for (final IPathPoint pp : pc.getPathPointSet())
-				drawPathPoint(g2d, pp);
+				drawPathPoint(g2d, pp, s==pp);
+		if (pathBuilder != null) {
+			if (p != null)
+				drawPathPoint(g2d, new PathPoint(p, pathBuilder.getName()), false);
+			for (final IPathPoint pp : pathBuilder.getPathPointSet())
+				drawPathPoint(g2d, pp, s==pp);
+		}		
+		if (selectedPoint != null) {
+			if (p != null)
+				drawPathPoint(g2d, new PathPoint(p, selectedPoint.getLabel()), true);
+		}
 	}
 
 	private void drawPath(final Graphics2D g2d) {
@@ -145,9 +226,9 @@ class CustomCanvas extends Canvas {
 			g2d.draw(path);
 	}
 
-	private static void drawPathPoint(final Graphics2D g2d, final IPathPoint pp) {
-		g2d.setColor(Color.BLACK);
-		g2d.fill(new Ellipse2D.Float(pp.getPointX() - 5f, pp.getPointY()-5f, 10f,10f));
+	private static void drawPathPoint(final Graphics2D g2d, final IPathPoint pp, boolean highlight) {
+		g2d.setColor(highlight ? Color.GREEN : Color.BLACK);
+		g2d.fill(new Ellipse2D.Float(pp.getPointX() - POINT_RADIUS, pp.getPointY()-POINT_RADIUS, 2f*POINT_RADIUS,2f*POINT_RADIUS));
 		g2d.drawString(String.format("%s(%.01f,%.01f)", pp.getLabel(), pp.getPointX(), pp.getPointY()), pp.getPointX(), //$NON-NLS-1$
 				pp.getPointY());
 	}
@@ -162,14 +243,17 @@ class CustomCanvas extends Canvas {
 	}
 
 	public void clearPathList() {
+		setMode(EMode.PATH_BUILD);
 		pathCommandList.clear();
 		pathBuilder = null;
 		repaint();
 	}
 
 	public void beginPath(final IPathBuilder pathBuilder) {
-		if (pathBuilder != null)
+		if (pathBuilder != null) {
+			setMode(EMode.PATH_BUILD);
 			this.pathBuilder = pathBuilder;
+		}
 	}
 
 	public void setWindingRule(final EWindingRule windingRule) {
@@ -183,5 +267,25 @@ class CustomCanvas extends Canvas {
 
 	public void setFillPaint(final TexturePaint paint) {
 		this.paint = paint;
+	}
+
+	public void setMode(EMode mode) {
+		if (mode == null || mode == this.mode)
+			return;
+		switch (mode) {
+		case PATH_BUILD:
+			selectedPoint = null;
+			selectedPath = null;
+			break;
+		case POINT_EDIT:
+			pathBuilder = null;
+			break;
+		default:
+			return;
+		}
+		final boolean repaint = this.mode != mode;
+		this.mode = mode;
+		if (repaint)
+			repaint();
 	}
 }
