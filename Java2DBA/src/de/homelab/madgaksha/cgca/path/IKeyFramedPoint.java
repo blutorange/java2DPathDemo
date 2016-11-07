@@ -6,26 +6,26 @@ public interface IKeyFramedPoint extends Comparable<IKeyFramedPoint> {
 	public float getTime();
 	public void set(float x, float y);
 	public void setTime(float time);
-	
+
 	public static class KeyFramedPoint implements IKeyFramedPoint {
 		private float time;
 		private float x,y;
-		public KeyFramedPoint(float x, float y, float time) {
+		public KeyFramedPoint(final float x, final float y, final float time) {
 			this.x = x;
 			this.y = y;
 			this.time = time;
 		}
 
 		@Override
-		public void setTime(float time) {
+		public void setTime(final float time) {
 			this.time = time;
 		}
-		
+
 		@Override
 		public String toString() {
-			return String.format("time=%.01f (%.01f,%.01f)", time, x, y);
+			return String.format("time=%.01f (%.01f,%.01f)", time, x, y); //$NON-NLS-1$
 		}
-		
+
 		@Override
 		public float getTime() {
 			return time;
@@ -39,13 +39,13 @@ public interface IKeyFramedPoint extends Comparable<IKeyFramedPoint> {
 			return y;
 		}
 		@Override
-		public void set(float x, float y) {
+		public void set(final float x, final float y) {
 			this.x = x;
 			this.y = y;
 		}
 
 		@Override
-		public int compareTo(IKeyFramedPoint other) {
+		public int compareTo(final IKeyFramedPoint other) {
 			if (getTime() != other.getTime())
 				return getTime() < other.getTime() ? -1 : 1;
 			if (getX() != other.getX())
@@ -64,14 +64,14 @@ public interface IKeyFramedPoint extends Comparable<IKeyFramedPoint> {
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			KeyFramedPoint other = (KeyFramedPoint) obj;
+			final KeyFramedPoint other = (KeyFramedPoint) obj;
 			if (Float.floatToIntBits(time) != Float.floatToIntBits(other.time))
 				return false;
 			if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
@@ -80,6 +80,6 @@ public interface IKeyFramedPoint extends Comparable<IKeyFramedPoint> {
 				return false;
 			return true;
 		}
-		
+
 	}
 }

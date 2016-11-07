@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,36 +25,42 @@ class AnimCanvas extends Canvas {
 	private final Paint paint;
 	private float startTime;
 	private float currentTime;
-	private Timer timer;
+	private final Timer timer;
 	private float repeat = -1f;
 	private boolean forthAndBack = true;
 
-	public AnimCanvas(List<IPathCommand> list, boolean closePath, boolean fillPath, EWindingRule windingRule, Paint paint) {
+	public AnimCanvas(final List<IPathCommand> list, final boolean closePath, final boolean fillPath, final EWindingRule windingRule, final Paint paint) {
 		this.list.addAll(list);
 		this.closePath = closePath;
 		this.fillPath = fillPath;
 		this.windingRule = windingRule;
 		this.paint = paint;
-		this.timer = new Timer(33, (ActionEvent ev) ->  {
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(final ComponentEvent ev) {
+				initBuffer();
+			}
+		});
+		this.timer = new Timer(33, (final ActionEvent ev) ->  {
 			repaint();
 		});
 	}
 
 	@Override
-	public void setVisible(boolean v) {
+	public void setVisible(final boolean v) {
 		super.setVisible(v);
 		if (v) {
 			startTime = System.nanoTime()*1E-9f;
 			startAnim();
 		}
 	}
-	
+
 	@Override
 	public void update(final Graphics g) {
 		if (startTime == 0f)
 			startTime = System.nanoTime()*1E-9f;
 		currentTime = System.nanoTime()*1E-9f - startTime;
-		
+
 		if (repeat > 0f) {
 			if (forthAndBack) {
 				currentTime = currentTime % (2*repeat);
@@ -63,7 +71,7 @@ class AnimCanvas extends Canvas {
 				currentTime = currentTime % repeat;
 			}
 		}
-		
+
 		if (dbImage == null)
 			initBuffer();
 
@@ -112,16 +120,16 @@ class AnimCanvas extends Canvas {
 	}
 
 	public void stopAnim() {
-		timer.stop();		
+		timer.stop();
 	}
 	public void startAnim() {
-		timer.start();		
+		timer.start();
 	}
 
-	public void setRepeat(float repeat) {
-		this.repeat  = repeat;	
+	public void setRepeat(final float repeat) {
+		this.repeat  = repeat;
 	}
-	public void setForthAndBack(boolean forthAndBack) {
+	public void setForthAndBack(final boolean forthAndBack) {
 		this.forthAndBack = forthAndBack;
 	}
 }

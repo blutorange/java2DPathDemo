@@ -31,7 +31,7 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 	public static class PathPoint extends DefaultListSelectionModel implements IPathPoint {
 		private static final long serialVersionUID = 1L;
 		private final List<IKeyFramedPoint> list = new ArrayList<>();
-		private final Set<ListDataListener> set = new HashSet<>();	
+		private final Set<ListDataListener> set = new HashSet<>();
 		private final String label;
 		private int selectedKeyFrame;
 		public PathPoint(final Point p, final String label) {
@@ -43,12 +43,12 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 			selectedKeyFrame = 0;
 		}
 		@Override
-		public void setPoint(float x, float y) {
+		public void setPoint(final float x, final float y) {
 			list.get(selectedKeyFrame).set(x,y);
 			notifyListeners(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, selectedKeyFrame, selectedKeyFrame));
 		}
 		@Override
-		public void setTime(float time) {
+		public void setTime(final float time) {
 			list.get(selectedKeyFrame).setTime(time);
 			Collections.sort(list);
 			notifyListeners(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, list.size()-1));
@@ -65,9 +65,9 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 		public float getPointY() {
 			return list.get(selectedKeyFrame).getY();
 		}
-		
+
 		@Override
-		public float getPointX(float time) {
+		public float getPointX(final float time) {
 			final int i = getFrameIndexAt(time);
 			if (i < 0)
 				return list.get(0).getX();
@@ -76,10 +76,10 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 			final IKeyFramedPoint p1 = list.get(i);
 			final IKeyFramedPoint p2 = list.get(i+1);
 			final float alpha = p1.getTime() == p2.getTime() ? 0.5f : (time-p1.getTime())/(p2.getTime()-p1.getTime());
-			return p1.getX()+ alpha*(p2.getX()-p1.getX());			
+			return p1.getX()+ alpha*(p2.getX()-p1.getX());
 		}
 		@Override
-		public float getPointY(float time) {
+		public float getPointY(final float time) {
 			final int i = getFrameIndexAt(time);
 			if (i < 0)
 				return list.get(0).getY();
@@ -91,52 +91,53 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 			return p1.getY()+ alpha*(p2.getY()-p1.getY());
 		}
 
-		private int getFrameIndexAt(float time) {
+		private int getFrameIndexAt(final float time) {
 			for (int i = list.size(); i --> 0;) {
 				if (time >= list.get(i).getTime())
 					return i;
 			}
 			return -1;
 		}
-		
+
 		@Override
 		public String toString() {
-			return list.isEmpty() ? "" : String.format("%d %s", selectedKeyFrame, list.get(selectedKeyFrame).toString());
+			return list.isEmpty() ? "" : String.format("%d %s", selectedKeyFrame, list.get(selectedKeyFrame).toString());  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		@Override
 		public int getSize() {
 			return list.size();
 		}
 		@Override
-		public IKeyFramedPoint getElementAt(int index) {
+		public IKeyFramedPoint getElementAt(final int index) {
 			return list.get(index);
 		}
 		@Override
-		public void addListDataListener(ListDataListener l) {
+		public void addListDataListener(final ListDataListener l) {
 			set.add(l);
 		}
 		@Override
-		public void removeListDataListener(ListDataListener l) {
+		public void removeListDataListener(final ListDataListener l) {
 			set.remove(l);
 		}
 		@Override
-		public void setSelectionInterval(int from, int to) {
+		public void setSelectionInterval(final int from, final int to) {
 			super.setSelectionInterval(from, to);
 			selectedKeyFrame  = from;
 		}
+		@Override
 		public void addKeyFrame() {
-			float time = list.isEmpty() ? 0f : list.get(list.size()-1).getTime() + 1f;
-			float x = list.isEmpty() ? 0f : list.get(list.size()-1).getX();
-			float y = list.isEmpty() ? 0f : list.get(list.size()-1).getY();
+			final float time = list.isEmpty() ? 0f : list.get(list.size()-1).getTime() + 1f;
+			final float x = list.isEmpty() ? 0f : list.get(list.size()-1).getX();
+			final float y = list.isEmpty() ? 0f : list.get(list.size()-1).getY();
 			list.add(new KeyFramedPoint(x, y, time));
 			final ListDataEvent ev = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, list.size()-1, list.size()-1);
 			notifyListeners(ev);
 		}
-		private void notifyListeners(ListDataEvent event) {
-			for (ListDataListener l : set)
+		private void notifyListeners(final ListDataEvent event) {
+			for (final ListDataListener l : set)
 				l.intervalAdded(event);
 		}
-		
+
 	}
 
 

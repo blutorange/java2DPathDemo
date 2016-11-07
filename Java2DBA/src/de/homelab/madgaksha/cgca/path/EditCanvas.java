@@ -1,7 +1,6 @@
 package de.homelab.madgaksha.cgca.path;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -23,7 +22,7 @@ import javax.swing.ListModel;
 
 import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
 
-class DrawingCanvas extends Canvas {
+class EditCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
 	private final static float POINT_RADIUS = 5f;
 	private final TimeList list;
@@ -39,7 +38,7 @@ class DrawingCanvas extends Canvas {
 	private IPathPoint selectedPoint;
 	private IPathCommand selectedPath;
 
-	public DrawingCanvas(TimeList list) {
+	public EditCanvas(final TimeList list) {
 		this.list  = list;
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -66,14 +65,14 @@ class DrawingCanvas extends Canvas {
 				switch (ev.getButton()) {
 				case (MouseEvent.BUTTON1):
 					mouseLeft(ev);
-					break;
+				break;
 				case (MouseEvent.BUTTON3):
 					mouseRight(ev);
-					break;
+				break;
 				}
 			}
 
-			private void mouseRight(MouseEvent ev) {
+			private void mouseRight(final MouseEvent ev) {
 				switch (mode) {
 				case PATH_BUILD:
 					break;
@@ -95,7 +94,7 @@ class DrawingCanvas extends Canvas {
 				}
 			}
 
-			private void mouseLeft(MouseEvent ev) {
+			private void mouseLeft(final MouseEvent ev) {
 				switch (mode) {
 				case PATH_BUILD:
 					if (pathBuilder != null) {
@@ -112,7 +111,7 @@ class DrawingCanvas extends Canvas {
 						}
 					}
 					else {
-						Point p = getMousePosition();
+						final Point p = getMousePosition();
 						if (p != null) {
 							selectedPoint.setPoint((float)p.getX(), (float)p.getY());
 							selectedPoint = null;
@@ -141,14 +140,14 @@ class DrawingCanvas extends Canvas {
 	}
 
 	protected IPathPoint getClosestNearMouse() {
-		Point p = getMousePosition();
+		final Point p = getMousePosition();
 		IPathPoint minP = null;
 		float minL = Float.MAX_VALUE;
 		if (p != null) {
-			for (IPathCommand pc : this.pathCommandList) {
-				for (IPathPoint pp : pc.getPathPointSet()) {
-					float x = pp.getPointX()-(float)p.getX();
-					float y = pp.getPointY()-(float)p.getY();
+			for (final IPathCommand pc : this.pathCommandList) {
+				for (final IPathPoint pp : pc.getPathPointSet()) {
+					final float x = pp.getPointX()-(float)p.getX();
+					final float y = pp.getPointY()-(float)p.getY();
 					if (x*x+y*y < minL) {
 						selectedPath = pc;
 						minP = pp;
@@ -214,7 +213,7 @@ class DrawingCanvas extends Canvas {
 				drawPathPoint(g2d, new PathPoint(p, pathBuilder.getName()), false);
 			for (final IPathPoint pp : pathBuilder.getPathPointSet())
 				drawPathPoint(g2d, pp, s==pp);
-		}		
+		}
 		if (selectedPoint != null) {
 			if (p != null)
 				drawPathPoint(g2d, new PathPoint(p, selectedPoint.getLabel()), true);
@@ -237,7 +236,7 @@ class DrawingCanvas extends Canvas {
 			g2d.draw(path);
 	}
 
-	private static void drawPathPoint(final Graphics2D g2d, final IPathPoint pp, boolean highlight) {
+	private static void drawPathPoint(final Graphics2D g2d, final IPathPoint pp, final boolean highlight) {
 		g2d.setColor(highlight ? Color.GREEN : Color.BLACK);
 		g2d.fill(new Ellipse2D.Float(pp.getPointX() - POINT_RADIUS, pp.getPointY()-POINT_RADIUS, 2f*POINT_RADIUS,2f*POINT_RADIUS));
 		g2d.drawString(String.format("%s(%.01f,%.01f)", pp.getLabel(), pp.getPointX(), pp.getPointY()), pp.getPointX(), //$NON-NLS-1$
@@ -280,7 +279,7 @@ class DrawingCanvas extends Canvas {
 		this.paint = paint;
 	}
 
-	public void setMode(EMode mode) {
+	public void setMode(final EMode mode) {
 		if (mode == null || mode == this.mode)
 			return;
 		switch (mode) {
@@ -303,22 +302,22 @@ class DrawingCanvas extends Canvas {
 	}
 
 	public void addKeyFrame() {
-		ListModel<?> model = list.getModel();
+		final ListModel<?> model = list.getModel();
 		if (model instanceof IPathPoint) {
-			IPathPoint p = (IPathPoint)model;
+			final IPathPoint p = (IPathPoint)model;
 			p.addKeyFrame();
 		}
 	}
 
-	public void setTime(float f) {
-		ListModel<?> model = list.getModel();
+	public void setTime(final float f) {
+		final ListModel<?> model = list.getModel();
 		if (model instanceof IPathPoint) {
-			IPathPoint p = (IPathPoint)model;
+			final IPathPoint p = (IPathPoint)model;
 			p.setTime(f);
-		}		
+		}
 	}
 
 	public AnimCanvas getAnimationCanvas() {
 		return new AnimCanvas(pathCommandList, closePath, fillPath, windingRule, paint);
-	}	
+	}
 }
