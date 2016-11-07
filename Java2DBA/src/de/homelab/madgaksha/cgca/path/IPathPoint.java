@@ -1,16 +1,30 @@
 package de.homelab.madgaksha.cgca.path;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public interface IPathPoint {
+import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
+
+import de.homelab.madgaksha.cgca.path.IKeyFramedPoint.KeyFramedPoint;
+
+public interface IPathPoint extends ListModel<IKeyFramedPoint> {
 	public String getLabel();
 	public float getPointX();
 	public float getPointY();
+	public void selectKeyFrame(float time);
 	public void setPoint(float x, float y);
 	@Override
-	public boolean equals(Object o);
+	public abstract boolean equals(Object o);
 	@Override
-	public int hashCode();
+	public abstract int hashCode();
+
 	public static class PathPoint implements IPathPoint {
+		private final List<IKeyFramedPoint> list = new ArrayList<>();
+		private final Set<ListDataListener> set = new HashSet<>();
+		
 		private final String label;
 		private float x,y;
 		public PathPoint(final Point p, final String label) {
@@ -20,6 +34,7 @@ public interface IPathPoint {
 			this.x = x;
 			this.y = y;
 			this.label = label;
+			list.add(new KeyFramedPoint(this,0f));
 		}
 		public void setPoint(float x, float y) {
 			this.x = x;
@@ -72,6 +87,30 @@ public interface IPathPoint {
 			if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
 				return false;
 			return true;
+		}
+		@Override
+		public String toString() {
+			return String.format("(%.01f,%.01f)", x,y);
+		}
+		@Override
+		public int getSize() {
+			return list.size();
+		}
+		@Override
+		public IKeyFramedPoint getElementAt(int index) {
+			return list.get(index);
+		}
+		@Override
+		public void addListDataListener(ListDataListener l) {
+			set.add(l);
+		}
+		@Override
+		public void removeListDataListener(ListDataListener l) {
+			set.remove(l);
+		}
+		@Override
+		public void selectKeyFrame(float time) {
+			// TODO Auto-generated method stub
 		}
 	}
 }

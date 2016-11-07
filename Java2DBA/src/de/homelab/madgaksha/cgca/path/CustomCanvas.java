@@ -17,11 +17,14 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JList;
+
 import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
 
 class CustomCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
 	private final static float POINT_RADIUS = 5f;
+	private final JList<IKeyFramedPoint> list;
 	private Image dbImage;
 	private Graphics dbg;
 	private final List<IPathCommand> pathCommandList = new ArrayList<>();
@@ -34,7 +37,8 @@ class CustomCanvas extends Canvas {
 	private IPathPoint selectedPoint;
 	private IPathCommand selectedPath;
 
-	public CustomCanvas() {
+	public CustomCanvas(JList<IKeyFramedPoint> list) {
+		this.list  = list;
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(final ComponentEvent ev) {
@@ -104,6 +108,7 @@ class CustomCanvas extends Canvas {
 						Point p = getMousePosition();
 						if (p != null) {
 							selectedPoint.setPoint((float)p.getX(), (float)p.getY());
+							list.setModel(selectedPoint);
 							selectedPoint = null;
 							selectedPath = null;
 							repaint();
@@ -276,6 +281,7 @@ class CustomCanvas extends Canvas {
 		case PATH_BUILD:
 			selectedPoint = null;
 			selectedPath = null;
+			list.setModel(DummyModel.INSTANCE);
 			break;
 		case POINT_EDIT:
 			pathBuilder = null;
