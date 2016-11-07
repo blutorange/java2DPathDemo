@@ -8,16 +8,19 @@ public interface IKeyFramedPoint extends Comparable<IKeyFramedPoint> {
 	public void setInterpolation(EInterpolation interpolation);
 	public void set(float x, float y);
 	public void setTime(float time);
+	public IPathPoint getPathPoint();
 
 	public static class KeyFramedPoint implements IKeyFramedPoint {
 		private float time;
 		private float x,y;
 		private EInterpolation interpolation;
-		public KeyFramedPoint(final float x, final float y, final float time) {
+		private final IPathPoint point;
+		public KeyFramedPoint(final IPathPoint point, final float x, final float y, final float time) {
 			this.x = x;
 			this.y = y;
 			this.time = time;
 			this.interpolation = EInterpolation.LINEAR;
+			this.point = point;
 		}
 
 		@Override
@@ -95,5 +98,11 @@ public interface IKeyFramedPoint extends Comparable<IKeyFramedPoint> {
 			this.interpolation = interpolation;
 		}
 
+		@Override
+		public IPathPoint getPathPoint() {
+			return point;
+		}
+
 	}
+
 }

@@ -43,19 +43,19 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 		}
 		public PathPoint(final float x, final float y, final String label) {
 			this.label = label;
-			list.add(new KeyFramedPoint(x,y,0f));
 			selectedKeyFrame = 0;
+			list.add(new KeyFramedPoint(this, x,y,0f));
 		}
 		@Override
 		public void setPoint(final float x, final float y) {
 			list.get(selectedKeyFrame).set(x,y);
-			notifyListeners(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, selectedKeyFrame, selectedKeyFrame));
+			notifyListenersChanged(selectedKeyFrame, selectedKeyFrame);
 		}
 		@Override
 		public void setTime(final float time) {
 			list.get(selectedKeyFrame).setTime(time);
 			Collections.sort(list);
-			notifyListeners(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, list.size()-1));
+			notifyListenersChanged(0, list.size()-1);
 		}
 		@Override
 		public String getLabel() {
@@ -133,22 +133,32 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 			final float time = list.isEmpty() ? 0f : list.get(list.size()-1).getTime() + 1f;
 			final float x = list.isEmpty() ? 0f : list.get(list.size()-1).getX();
 			final float y = list.isEmpty() ? 0f : list.get(list.size()-1).getY();
-			list.add(new KeyFramedPoint(x, y, time));
-			final ListDataEvent ev = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, list.size()-1, list.size()-1);
-			notifyListeners(ev);
+			list.add(new KeyFramedPoint(this, x, y, time));
+			notifyListenersAdded(list.size()-1, list.size()-1);
 		}
 		@Override
 		public void removeKeyFrame() {
 			if (selectedKeyFrame >= 0) {
 				list.remove(selectedKeyFrame);
-				final ListDataEvent ev = new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, selectedKeyFrame, selectedKeyFrame);
-				notifyListeners(ev);
+				notifyListenersRemoved(selectedKeyFrame, selectedKeyFrame);
 			}
 		}
-		private void notifyListeners(final ListDataEvent event) {
+		private void notifyListenersAdded(final int from, final int to) {
+			final ListDataEvent event = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, from, to);
 			for (final ListDataListener l : set)
 				l.intervalAdded(event);
 		}
+		private void notifyListenersRemoved(final int from, final int to) {
+			final ListDataEvent event = new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, from, to);
+			for (final ListDataListener l : set)
+				l.intervalRemoved(event);
+		}
+		private void notifyListenersChanged(final int from, final int to) {
+			final ListDataEvent event = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, from, to);
+			for (final ListDataListener l : set)
+				l.contentsChanged(event);
+		}
+
 		@Override
 		public Iterator<IKeyFramedPoint> getElementIterator() {
 			return list.iterator();

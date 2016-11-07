@@ -68,30 +68,20 @@ class EditCanvas extends Canvas {
 					mouseLeft(ev);
 				break;
 				case (MouseEvent.BUTTON3):
-					mouseRight(ev);
+					mouseRight();
 				break;
 				}
 			}
 
-			private void mouseRight(final MouseEvent ev) {
-				switch (mode) {
-				case PATH_BUILD:
-					break;
-				case POINT_EDIT:
-					IPathPoint p = selectedPoint;
-					if (p == null)
-						p = getClosestNearMouse();
-					if (p != null && selectedPath != null) {
-						pathCommandList.remove(selectedPath);
-						selectedPath = null;
-						selectedPoint = null;
-						if (pathCommandList.isEmpty())
-							setMode(EMode.PATH_BUILD);
-						repaint();
-					}
-					break;
-				default:
-					break;
+			private void mouseRight() {
+				final IPathPoint p = getClosestNearMouse();
+				if (p != null) {
+					pathCommandList.remove(selectedPath);
+					selectedPath = null;
+					selectedPoint = null;
+					if (pathCommandList.isEmpty())
+						setMode(EMode.PATH_BUILD);
+					repaint();
 				}
 			}
 
@@ -105,11 +95,7 @@ class EditCanvas extends Canvas {
 					break;
 				case POINT_EDIT:
 					if (selectedPoint == null) {
-						selectedPoint = getClosestNearMouse();
-						if (selectedPoint != null) {
-							list.setModel(selectedPoint);
-							list.setSelectionModel(selectedPoint);
-						}
+						enterSelectMode(getClosestNearMouse());
 					}
 					else {
 						final Point p = getMousePosition();
@@ -300,6 +286,23 @@ class EditCanvas extends Canvas {
 		this.mode = mode;
 		if (repaint)
 			repaint();
+	}
+
+	public void enterSelectMode(final IPathPoint p) {
+		setMode(EMode.POINT_EDIT);
+		selectedPoint = p;
+		if (selectedPoint != null) {
+			if (list.getModel() != selectedPoint)
+				list.setModel(selectedPoint);
+			if (list.getSelectionModel() != selectedPoint)
+				list.setSelectionModel(selectedPoint);
+		}
+		else {
+			selectedPoint = null;
+			selectedPath = null;
+			list.setModel(DummyModel.INSTANCE);
+			list.setSelectionModel(new DefaultListSelectionModel());
+		}
 	}
 
 	public void addKeyFrame() {

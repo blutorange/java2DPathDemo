@@ -2,13 +2,15 @@ package de.homelab.madgaksha.cgca.path;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
@@ -33,7 +35,13 @@ class TimePanel extends JPanel {
 
 		final JPanel timeControlPanel = new JPanel();
 
-		timeControlPanel.setLayout(new BoxLayout(timeControlPanel, BoxLayout.Y_AXIS));
+		timeControlPanel.setLayout(new GridBagLayout());
+
+		final GridBagConstraints cons = new GridBagConstraints();
+		cons.fill = GridBagConstraints.HORIZONTAL;
+		cons.weightx = 1;
+		cons.gridx = 0;
+
 		btnAddTime = new JButton("Add time"); //$NON-NLS-1$
 		btnSetTime = new JButton("Set time"); //$NON-NLS-1$
 		btnRemoveTime = new JButton("Remove time"); //$NON-NLS-1$
@@ -44,10 +52,11 @@ class TimePanel extends JPanel {
 		selInter.setSelectedItem(EInterpolation.LINEAR);
 
 		setPreferredSize(new Dimension(200,-1));
-		timeControlPanel.add(btnAddTime);
-		timeControlPanel.add(btnSetTime);
-		timeControlPanel.add(btnRemoveTime);
-		timeControlPanel.add(selInter);
+		timeControlPanel.add(btnAddTime, cons);
+		timeControlPanel.add(btnSetTime, cons);
+		timeControlPanel.add(btnRemoveTime, cons);
+		timeControlPanel.add(new JLabel("Interpolation"), cons); //$NON-NLS-1$
+		timeControlPanel.add(selInter, cons);
 
 		setLayout(new BorderLayout(5,5));
 		add(timeControlPanel, BorderLayout.NORTH);
@@ -93,6 +102,7 @@ class TimePanel extends JPanel {
 		selectionListener = (final ListSelectionEvent event) -> {
 			final IKeyFramedPoint sel = list.getSelectedValue();
 			if (sel != null) {
+				canvas.enterSelectMode(sel.getPathPoint());
 				final EInterpolation ipol = sel.getInterpolation();
 				if (ipol!= null) {
 					selInter.setSelectedItem(ipol);
