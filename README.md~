@@ -1,6 +1,6 @@
 # java2DPathDemo
 
-Simple demo of Java 2D paths + animation. Needs Java8+.
+Simple demo of Java 2D paths + animation.
 
 - Main class: de.homelab.madgaksha.cgca.path.MainFrame
 - Import as maven project.
