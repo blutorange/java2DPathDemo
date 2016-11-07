@@ -15,6 +15,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
@@ -309,7 +310,7 @@ class EditCanvas extends Canvas {
 		}
 	}
 
-	public void setTime(final float f) {
+	public void setKeyFrame(final float f) {
 		final ListModel<?> model = list.getModel();
 		if (model instanceof IPathPoint) {
 			final IPathPoint p = (IPathPoint)model;
@@ -317,7 +318,29 @@ class EditCanvas extends Canvas {
 		}
 	}
 
+	public void removeKeyFrame() {
+		final ListModel<?> model = list.getModel();
+		if (model.getSize() > 1 && list.getSelectedIndex() >= 0 && model instanceof IPathPoint) {
+			((IPathPoint)model).removeKeyFrame();
+			list.clearSelection();
+		}
+	}
+
 	public AnimCanvas getAnimationCanvas() {
 		return new AnimCanvas(pathCommandList, closePath, fillPath, windingRule, paint);
+	}
+
+	public float getMaximumTime() {
+		float maxTime = 0f;
+		for (final IPathCommand pc : pathCommandList) {
+			for (final IPathPoint pp : pc.getPathPointSet()) {
+				for (final Iterator<IKeyFramedPoint> it = pp.getElementIterator(); it.hasNext();) {
+					final IKeyFramedPoint kfp = it.next();
+					if (kfp.getTime() > maxTime)
+						maxTime = kfp.getTime();
+				}
+			}
+		}
+		return maxTime;
 	}
 }

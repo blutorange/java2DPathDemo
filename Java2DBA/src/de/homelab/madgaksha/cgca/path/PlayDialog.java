@@ -16,7 +16,7 @@ public class PlayDialog extends JDialog {
 		setLayout(new BorderLayout(5,5));
 
 		animCanvas = canvas.getAnimationCanvas();
-		final JPanel controlPanel = new AnimControlPanel(animCanvas);
+		final JPanel controlPanel = new AnimControlPanel(animCanvas, canvas.getMaximumTime());
 
 		add(controlPanel, BorderLayout.NORTH);
 		add(animCanvas, BorderLayout.CENTER);

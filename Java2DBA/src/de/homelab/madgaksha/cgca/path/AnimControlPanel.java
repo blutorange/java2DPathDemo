@@ -1,5 +1,6 @@
 package de.homelab.madgaksha.cgca.path;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
@@ -15,15 +16,17 @@ class AnimControlPanel extends JPanel {
 	final JTextField tfRepeat;
 	final JCheckBox cbForthBack;
 	final AnimCanvas animCanvas;
-	public AnimControlPanel(final AnimCanvas animCanvas) {
+	public AnimControlPanel(final AnimCanvas animCanvas, final float repeatTime) {
 		this.animCanvas = animCanvas;
 		cbForthBack = new JCheckBox("forthAndBack"); //$NON-NLS-1$
-		tfRepeat = new JTextField("1"); //$NON-NLS-1$
+		tfRepeat = new JTextField(Float.toString(repeatTime));
 
 		setLayout(new FlowLayout());
 		add(new JLabel("Repeat time")); //$NON-NLS-1$
 		add(tfRepeat);
 		add(cbForthBack);
+		cbForthBack.setSelected(true);
+		tfRepeat.setPreferredSize(new Dimension(32, 24));
 
 		tfRepeat.addActionListener((final ActionEvent ev) ->  {
 			setRepeatTime();

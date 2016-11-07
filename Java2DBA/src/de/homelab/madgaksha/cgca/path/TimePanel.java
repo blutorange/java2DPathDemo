@@ -1,11 +1,14 @@
 package de.homelab.madgaksha.cgca.path;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
@@ -17,20 +20,34 @@ class TimePanel extends JPanel {
 	private final TimeList list;
 	private final JButton btnAddTime;
 	private final JButton btnSetTime;
+	private final JButton btnRemoveTime;
+	private final JComboBox<EInterpolation> selInter;
 	private ListSelectionListener selectionListener;
 	private ActionListener addTimeActionListener;
 	private ActionListener setTimeActionListener;
+	private ActionListener removeTimeActionListener;
+	private ActionListener selectInterpolationListener;
 
 	public TimePanel() {
 		list = new TimeList();
 
 		final JPanel timeControlPanel = new JPanel();
-		timeControlPanel.setLayout(new FlowLayout());
+
+		timeControlPanel.setLayout(new BoxLayout(timeControlPanel, BoxLayout.Y_AXIS));
 		btnAddTime = new JButton("Add time"); //$NON-NLS-1$
 		btnSetTime = new JButton("Set time"); //$NON-NLS-1$
+		btnRemoveTime = new JButton("Remove time"); //$NON-NLS-1$
+		final EInterpolation[] ipolValues = EInterpolation.values();
+		Arrays.sort(ipolValues,
+				(final EInterpolation o1, final EInterpolation o2) -> o1.toString().compareTo(o2.toString()));
+		selInter = new JComboBox<EInterpolation>(ipolValues);
+		selInter.setSelectedItem(EInterpolation.LINEAR);
 
+		setPreferredSize(new Dimension(200,-1));
 		timeControlPanel.add(btnAddTime);
 		timeControlPanel.add(btnSetTime);
+		timeControlPanel.add(btnRemoveTime);
+		timeControlPanel.add(selInter);
 
 		setLayout(new BorderLayout(5,5));
 		add(timeControlPanel, BorderLayout.NORTH);
@@ -49,6 +66,10 @@ class TimePanel extends JPanel {
 			btnAddTime.removeActionListener(addTimeActionListener);
 		if (setTimeActionListener != null)
 			btnSetTime.removeActionListener(setTimeActionListener);
+		if (removeTimeActionListener != null)
+			btnRemoveTime.removeActionListener(removeTimeActionListener);
+		if (selectInterpolationListener != null)
+			selInter.removeActionListener(selectInterpolationListener);
 
 		addTimeActionListener = (final ActionEvent actionEvent) -> {
 			canvas.addKeyFrame();
@@ -60,17 +81,37 @@ class TimePanel extends JPanel {
 			try {
 				final float f = Float.parseFloat(time);
 				if (f >= 0f)
-					canvas.setTime(f);
+					canvas.setKeyFrame(f);
 			}
 			catch (final NumberFormatException e) {
 				e.printStackTrace();
 			}
 		};
+		removeTimeActionListener = (final ActionEvent actionEvent) -> {
+			canvas.removeKeyFrame();
+		};
 		selectionListener = (final ListSelectionEvent event) -> {
+			final IKeyFramedPoint sel = list.getSelectedValue();
+			if (sel != null) {
+				final EInterpolation ipol = sel.getInterpolation();
+				if (ipol!= null) {
+					selInter.setSelectedItem(ipol);
+				}
+			}
 			canvas.repaint();
+		};
+		selectInterpolationListener = (final ActionEvent event) -> {
+			SWUtil.cboxAs(event, EInterpolation.class).ifPresent(ipol -> {
+				final IKeyFramedPoint sel = list.getSelectedValue();
+				if (sel != null) {
+					sel.setInterpolation(ipol);
+				}
+			});
 		};
 		btnAddTime.addActionListener(addTimeActionListener);
 		btnSetTime.addActionListener(setTimeActionListener);
+		btnRemoveTime.addActionListener(removeTimeActionListener);
+		selInter.addActionListener(selectInterpolationListener);
 		list.addListSelectionListener(selectionListener);
 	}
 
