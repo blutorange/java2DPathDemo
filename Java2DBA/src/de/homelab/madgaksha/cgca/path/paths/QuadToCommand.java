@@ -1,7 +1,8 @@
 package de.homelab.madgaksha.cgca.path.paths;
 
 import java.awt.Point;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Float;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class QuadToCommand implements IPathCommand {
 		set.add(p2);
 	}
 	@Override
-	public void apply(final GeneralPath path) {
+	public void apply(final Path2D.Float path) {
 		path.quadTo(p1.getPointX(), p1.getPointY(),p2.getPointX(),p2.getPointY());
 	}
 	@Override
@@ -35,5 +36,9 @@ public class QuadToCommand implements IPathCommand {
 	@Override
 	public Set<IPathPoint> getPathPointSet() {
 		return set;
+	}
+	@Override
+	public void apply(Float path, float time) {
+		path.quadTo(p1.getPointX(time), p1.getPointY(time),p2.getPointX(time),p2.getPointY(time));
 	}
 }

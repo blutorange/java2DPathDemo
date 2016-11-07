@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import de.homelab.madgaksha.cgca.path.IPathCommand;
 
-public class LineToBuilder extends OnePathBuilder {
+public class LineToBuilder extends OnePointBuilder {
 	@Override
 	public String getName() {
 		return "LineTo"; //$NON-NLS-1$

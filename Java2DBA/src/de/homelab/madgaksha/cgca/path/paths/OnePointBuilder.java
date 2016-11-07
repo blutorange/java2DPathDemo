@@ -8,7 +8,7 @@ import de.homelab.madgaksha.cgca.path.IPathBuilder;
 import de.homelab.madgaksha.cgca.path.IPathCommand;
 import de.homelab.madgaksha.cgca.path.IPathPoint;
 
-abstract class OnePathBuilder implements IPathBuilder {
+abstract class OnePointBuilder implements IPathBuilder {
 	private Point p;
 	@Override
 	public final void mouseClick(final Point p) {

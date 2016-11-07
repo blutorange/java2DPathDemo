@@ -22,9 +22,12 @@ import de.homelab.madgaksha.cgca.path.paths.MoveToBuilder;
 import de.homelab.madgaksha.cgca.path.paths.QuadToBuilder;
 
 class ControlPanel extends JPanel {
-	private final CustomCanvas canvas;
-	public ControlPanel(CustomCanvas canvas) {
+	private static final long serialVersionUID = 1L;
+	private final DrawingCanvas canvas;
+	private final MainFrame frame;
+	public ControlPanel(DrawingCanvas canvas, MainFrame frame) {
 		this.canvas = canvas;
+		this.frame = frame;
 		
 		final JButton btnClear = new JButton("clear"); //$NON-NLS-1$
 		final JButton btnMoveTo = new JButton("moveTo"); //$NON-NLS-1$
@@ -32,8 +35,9 @@ class ControlPanel extends JPanel {
 		final JButton btnQuadTo = new JButton("quadTo"); //$NON-NLS-1$
 		final JButton btnCurveTo = new JButton("curveTo"); //$NON-NLS-1$
 		final JButton btnChange = new JButton("change"); //$NON-NLS-1$
-		final JCheckBox cbClose = new JCheckBox("close"); //$NON-NLS-1$
+		final JButton btnPlayAnim = new JButton("play..."); //$NON-NLS-1$
 		final JButton btnText = new JButton("Load texture..."); //$NON-NLS-1$
+		final JCheckBox cbClose = new JCheckBox("close"); //$NON-NLS-1$
 		final JCheckBox cbFill = new JCheckBox("fill"); //$NON-NLS-1$
 		final JFileChooser fcText = new JFileChooser("Load texture..."); //$NON-NLS-1$
 		final JComboBox<EWindingRule> selWRule = new JComboBox<>(EWindingRule.values());
@@ -49,6 +53,7 @@ class ControlPanel extends JPanel {
 		add(cbClose);
 		add(cbFill);
 		add(selWRule);
+		add(btnPlayAnim);
 		
 		btnClear.addActionListener((final ActionEvent actionEvent) -> {
 			canvas.clearPathList();
@@ -70,6 +75,9 @@ class ControlPanel extends JPanel {
 		});
 		btnChange.addActionListener((final ActionEvent actionEvent) -> {
 			canvas.setMode(EMode.POINT_EDIT);
+		});
+		btnPlayAnim.addActionListener((final ActionEvent actionEvent) -> {
+			playAnimation();
 		});
 		fcText.addActionListener((final ActionEvent actionEvent) -> {
 			final Object source = actionEvent.getSource();
@@ -114,5 +122,9 @@ class ControlPanel extends JPanel {
 				MainFrame.LOG.log(Level.SEVERE, "not a checkbox instance: " + source.getClass().getCanonicalName()); //$NON-NLS-1$
 		});
 		selWRule.setSelectedItem(canvas.getWindingRule());
+	}
+	private void playAnimation() {
+		PlayDialog dialog = new PlayDialog(frame, canvas);
+		dialog.setVisible(true);
 	}
 }

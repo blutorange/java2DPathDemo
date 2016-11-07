@@ -1,6 +1,7 @@
 package de.homelab.madgaksha.cgca.path;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,18 +14,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JList;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ListModel;
 
 import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
 
-class CustomCanvas extends Canvas {
+class DrawingCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
 	private final static float POINT_RADIUS = 5f;
-	private final JList<IKeyFramedPoint> list;
+	private final TimeList list;
 	private Image dbImage;
 	private Graphics dbg;
 	private final List<IPathCommand> pathCommandList = new ArrayList<>();
@@ -37,7 +39,7 @@ class CustomCanvas extends Canvas {
 	private IPathPoint selectedPoint;
 	private IPathCommand selectedPath;
 
-	public CustomCanvas(JList<IKeyFramedPoint> list) {
+	public DrawingCanvas(TimeList list) {
 		this.list  = list;
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -102,13 +104,17 @@ class CustomCanvas extends Canvas {
 					}
 					break;
 				case POINT_EDIT:
-					if (selectedPoint == null)
+					if (selectedPoint == null) {
 						selectedPoint = getClosestNearMouse();
+						if (selectedPoint != null) {
+							list.setModel(selectedPoint);
+							list.setSelectionModel(selectedPoint);
+						}
+					}
 					else {
 						Point p = getMousePosition();
 						if (p != null) {
 							selectedPoint.setPoint((float)p.getX(), (float)p.getY());
-							list.setModel(selectedPoint);
 							selectedPoint = null;
 							selectedPath = null;
 							repaint();
@@ -218,7 +224,7 @@ class CustomCanvas extends Canvas {
 	private void drawPath(final Graphics2D g2d) {
 		g2d.setColor(Color.red);
 		g2d.setPaint(paint);
-		final GeneralPath path = new GeneralPath();
+		final Path2D.Float path = new Path2D.Float();
 		path.setWindingRule(windingRule.getInt());
 		path.moveTo(0f, 0f);
 		for (final IPathCommand pc : pathCommandList)
@@ -282,6 +288,7 @@ class CustomCanvas extends Canvas {
 			selectedPoint = null;
 			selectedPath = null;
 			list.setModel(DummyModel.INSTANCE);
+			list.setSelectionModel(new DefaultListSelectionModel());
 			break;
 		case POINT_EDIT:
 			pathBuilder = null;
@@ -294,4 +301,24 @@ class CustomCanvas extends Canvas {
 		if (repaint)
 			repaint();
 	}
+
+	public void addKeyFrame() {
+		ListModel<?> model = list.getModel();
+		if (model instanceof IPathPoint) {
+			IPathPoint p = (IPathPoint)model;
+			p.addKeyFrame();
+		}
+	}
+
+	public void setTime(float f) {
+		ListModel<?> model = list.getModel();
+		if (model instanceof IPathPoint) {
+			IPathPoint p = (IPathPoint)model;
+			p.setTime(f);
+		}		
+	}
+
+	public AnimCanvas getAnimationCanvas() {
+		return new AnimCanvas(pathCommandList, closePath, fillPath, windingRule, paint);
+	}	
 }

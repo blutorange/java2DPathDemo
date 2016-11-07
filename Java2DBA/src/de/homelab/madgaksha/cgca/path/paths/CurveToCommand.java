@@ -1,7 +1,7 @@
 package de.homelab.madgaksha.cgca.path.paths;
 
 import java.awt.Point;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,8 +27,12 @@ public class CurveToCommand implements IPathCommand {
 		set.add(p3);
 	}
 	@Override
-	public void apply(final GeneralPath path) {
+	public void apply(final Path2D.Float path) {
 		path.curveTo(p1.getPointX(),p1.getPointY(),p2.getPointX(),p2.getPointY(),p3.getPointX(),p3.getPointY());
+	}
+	@Override
+	public void apply(final Path2D.Float path, float time) {
+		path.curveTo(p1.getPointX(time),p1.getPointY(),p2.getPointX(time),p2.getPointY(time),p3.getPointX(),p3.getPointY(time));
 	}
 	@Override
 	public String getName() {

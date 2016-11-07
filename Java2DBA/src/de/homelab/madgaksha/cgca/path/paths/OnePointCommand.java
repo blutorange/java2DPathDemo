@@ -1,7 +1,7 @@
 package de.homelab.madgaksha.cgca.path.paths;
 
 import java.awt.Point;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,10 +27,14 @@ abstract class OnePointCommand implements IPathCommand {
 		return set;
 	}
 	@Override
-	public final void apply(final GeneralPath path) {
+	public final void apply(final Path2D.Float path) {
 		applySubclass(p.getPointX(), p.getPointY(), path);
 	}
-	protected abstract void applySubclass(float x, float y, GeneralPath path);
+	@Override
+	public final void apply(final Path2D.Float path, final float time) {
+		applySubclass(p.getPointX(time), p.getPointY(time), path);
+	}
+	protected abstract void applySubclass(float x, float y, Path2D.Float path);
 	@Override
 	public abstract String getName();
 

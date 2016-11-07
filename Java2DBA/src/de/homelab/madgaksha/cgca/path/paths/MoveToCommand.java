@@ -1,7 +1,7 @@
 package de.homelab.madgaksha.cgca.path.paths;
 
 import java.awt.Point;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 
 public class MoveToCommand extends OnePointCommand {
 	public MoveToCommand(final Point p) {
@@ -18,7 +18,7 @@ public class MoveToCommand extends OnePointCommand {
 		return "MoveTo"; //$NON-NLS-1$
 	}
 	@Override
-	protected void applySubclass(final float x, final float y, final GeneralPath path) {
+	protected void applySubclass(final float x, final float y, final Path2D.Float path) {
 		path.moveTo(x, y);
 	}
 }
