@@ -21,8 +21,6 @@ import java.util.List;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListModel;
 
-import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
-
 class EditCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
 	private final static float POINT_RADIUS = 5f;

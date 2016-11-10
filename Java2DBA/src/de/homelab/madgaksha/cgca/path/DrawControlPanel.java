@@ -79,7 +79,7 @@ class DrawControlPanel extends JPanel {
 			playAnimation();
 		});
 		fcText.addActionListener((final ActionEvent event) -> {
-			SWUtil.srcAs(event, JFileChooser.class).ifPresent(fileChooser -> {
+			SWUtil.srcAs(event, JFileChooser.class).ifPresent((final JFileChooser fileChooser) -> {
 				final File file = fileChooser.getSelectedFile();
 				try {
 					final BufferedImage img = ImageIO.read(file);

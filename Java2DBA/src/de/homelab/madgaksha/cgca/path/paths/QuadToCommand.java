@@ -8,7 +8,7 @@ import java.util.Set;
 
 import de.homelab.madgaksha.cgca.path.IPathCommand;
 import de.homelab.madgaksha.cgca.path.IPathPoint;
-import de.homelab.madgaksha.cgca.path.IPathPoint.PathPoint;
+import de.homelab.madgaksha.cgca.path.PathPoint;
 
 public class QuadToCommand implements IPathCommand {
 	private final IPathPoint p1,p2;
