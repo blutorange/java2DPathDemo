@@ -38,6 +38,7 @@ class EditCanvas extends Canvas {
 	private IPathCommand selectedPath;
 
 	public EditCanvas(final TimeList list) {
+		super();
 		this.list  = list;
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -69,6 +70,7 @@ class EditCanvas extends Canvas {
 					mouseRight();
 				break;
 				}
+				repaint();
 			}
 
 			private void mouseRight() {
@@ -79,7 +81,6 @@ class EditCanvas extends Canvas {
 					selectedPoint = null;
 					if (pathCommandList.isEmpty())
 						setMode(EMode.PATH_BUILD);
-					repaint();
 				}
 				else {
 					setMode(EMode.PATH_BUILD);
@@ -105,7 +106,6 @@ class EditCanvas extends Canvas {
 							selectedPoint.setPoint((float)p.getX(), (float)p.getY());
 							selectedPoint = null;
 							selectedPath = null;
-							repaint();
 						}
 					}
 					break;
@@ -155,6 +155,7 @@ class EditCanvas extends Canvas {
 			final IPathBuilder newPathBuilder = pathBuilder.getNew();
 			pathBuilder = null;
 			this.beginPath(newPathBuilder);
+			repaint();
 		}
 	}
 
@@ -225,8 +226,11 @@ class EditCanvas extends Canvas {
 			g2d.draw(path);
 	}
 
-	private static void drawPathPoint(final Graphics2D g2d, final IPathPoint pp, final boolean highlight) {
-		g2d.setColor(highlight ? Color.GREEN : Color.BLACK);
+	private void drawPathPoint(final Graphics2D g2d, final IPathPoint pp, final boolean highlight) {
+		if (pp.equals(list.getSelectedPoint()))
+			g2d.setColor(highlight ? Color.RED : Color.GREEN);
+		else
+			g2d.setColor(highlight ? Color.BLUE : Color.BLACK);			
 		g2d.fill(new Ellipse2D.Float(pp.getPointX() - POINT_RADIUS, pp.getPointY()-POINT_RADIUS, 2f*POINT_RADIUS,2f*POINT_RADIUS));
 		g2d.drawString(String.format("%s(%.01f,%.01f)", pp.getLabel(), pp.getPointX(), pp.getPointY()), pp.getPointX(), //$NON-NLS-1$
 				pp.getPointY());
@@ -256,8 +260,10 @@ class EditCanvas extends Canvas {
 	}
 
 	public void setWindingRule(final EWindingRule windingRule) {
-		if (windingRule != null)
+		if (windingRule != null) {
 			this.windingRule = windingRule;
+			repaint();
+		}
 	}
 
 	public Object getWindingRule() {
@@ -294,16 +300,12 @@ class EditCanvas extends Canvas {
 		setMode(EMode.POINT_EDIT);
 		selectedPoint = p;
 		if (selectedPoint != null) {
-			if (list.getModel() != selectedPoint)
-				list.setModel(selectedPoint);
-			if (list.getSelectionModel() != selectedPoint)
-				list.setSelectionModel(selectedPoint);
+			list.forPathPoint(selectedPoint);
 		}
 		else {
+			list.forNothing();
 			selectedPoint = null;
 			selectedPath = null;
-			list.setModel(DummyModel.INSTANCE);
-			list.setSelectionModel(new DefaultListSelectionModel());
 		}
 	}
 

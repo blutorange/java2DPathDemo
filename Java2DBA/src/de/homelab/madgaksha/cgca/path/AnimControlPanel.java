@@ -17,6 +17,7 @@ class AnimControlPanel extends JPanel {
 	final JCheckBox cbForthBack;
 	final AnimCanvas animCanvas;
 	public AnimControlPanel(final AnimCanvas animCanvas, final float repeatTime) {
+		super();
 		this.animCanvas = animCanvas;
 		cbForthBack = new JCheckBox("forthAndBack"); //$NON-NLS-1$
 		tfRepeat = new JTextField(Float.toString(repeatTime));

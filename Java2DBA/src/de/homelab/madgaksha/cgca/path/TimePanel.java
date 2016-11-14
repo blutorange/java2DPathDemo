@@ -6,6 +6,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 
 import javax.swing.JButton;
@@ -28,9 +30,10 @@ class TimePanel extends JPanel {
 	private ActionListener addTimeActionListener;
 	private ActionListener setTimeActionListener;
 	private ActionListener removeTimeActionListener;
-	private ActionListener selectInterpolationListener;
+	private ItemListener selectInterpolationListener;
 
 	public TimePanel() {
+		super();
 		list = new TimeList();
 
 		final JPanel timeControlPanel = new JPanel();
@@ -78,7 +81,7 @@ class TimePanel extends JPanel {
 		if (removeTimeActionListener != null)
 			btnRemoveTime.removeActionListener(removeTimeActionListener);
 		if (selectInterpolationListener != null)
-			selInter.removeActionListener(selectInterpolationListener);
+			selInter.removeItemListener(selectInterpolationListener);
 
 		addTimeActionListener = (final ActionEvent actionEvent) -> {
 			canvas.addKeyFrame();
@@ -112,8 +115,8 @@ class TimePanel extends JPanel {
 			}
 			canvas.repaint();
 		};
-		selectInterpolationListener = (final ActionEvent event) -> {
-			SWUtil.cboxAs(event, EInterpolation.class).ifPresent(ipol -> {
+		selectInterpolationListener = (final ItemEvent event) -> {
+			SWUtil.cboxSelAs(event, EInterpolation.class).ifPresent(ipol -> {
 				final IKeyFramedPoint sel = list.getSelectedValue();
 				if (sel != null) {
 					sel.setInterpolation(ipol);
@@ -123,7 +126,7 @@ class TimePanel extends JPanel {
 		btnAddTime.addActionListener(addTimeActionListener);
 		btnSetTime.addActionListener(setTimeActionListener);
 		btnRemoveTime.addActionListener(removeTimeActionListener);
-		selInter.addActionListener(selectInterpolationListener);
+		selInter.addItemListener(selectInterpolationListener);
 		list.addListSelectionListener(selectionListener);
 	}
 

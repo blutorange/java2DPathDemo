@@ -1,9 +1,8 @@
 package de.homelab.madgaksha.cgca.path;
 
+import java.awt.event.ItemEvent;
 import java.util.EventObject;
 import java.util.Optional;
-
-import javax.swing.JComboBox;
 
 public final class SWUtil {
 	private SWUtil() {}
@@ -16,14 +15,10 @@ public final class SWUtil {
 		return Optional.empty();
 	}
 	@SuppressWarnings("unchecked")
-	public static <T> Optional<T> cboxAs(final EventObject event, final Class<T> clazz) {
-		@SuppressWarnings("rawtypes")
-		final Optional<JComboBox> cb = srcAs(event, JComboBox.class);
-		if (cb.isPresent()) {
-			final Object s = cb.get().getSelectedItem();
-			if (s != null && clazz.isAssignableFrom(s.getClass()))
-				return Optional.of((T)s);
-		}
+	public static <T> Optional<T> cboxSelAs(final ItemEvent event, final Class<T> clazz) {
+		final Object s = event.getItem();
+		if (event.getStateChange() == ItemEvent.SELECTED && s != null && clazz.isAssignableFrom(s.getClass()))
+			return Optional.of((T)s);
 		return Optional.empty();
 	}
 }

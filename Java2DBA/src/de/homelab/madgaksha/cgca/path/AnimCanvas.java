@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -30,6 +31,7 @@ class AnimCanvas extends Canvas {
 	private boolean forthAndBack = true;
 
 	public AnimCanvas(final List<IPathCommand> list, final boolean closePath, final boolean fillPath, final EWindingRule windingRule, final Paint paint) {
+		super();
 		this.list.addAll(list);
 		this.closePath = closePath;
 		this.fillPath = fillPath;
@@ -90,7 +92,10 @@ class AnimCanvas extends Canvas {
 	private void initBuffer() {
 		if (getSize().width > 0 && getSize().height > 0) {
 			dbImage = createImage(getSize().width, getSize().height);
-			dbg = dbImage.getGraphics();
+			Graphics dbg = dbImage.getGraphics();
+			if (dbg instanceof Graphics2D)
+				((Graphics2D)dbg).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			this.dbg = dbg;
 		}
 	}
 

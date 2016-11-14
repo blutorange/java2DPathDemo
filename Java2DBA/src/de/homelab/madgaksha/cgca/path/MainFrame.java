@@ -13,6 +13,7 @@ public class MainFrame extends JFrame {
 	private final TimePanel timePanel;
 
 	public MainFrame() {
+		super();
 		timePanel = new TimePanel();
 		canvas = new EditCanvas(timePanel.getList());
 		controlPanel = new DrawControlPanel(canvas, this);

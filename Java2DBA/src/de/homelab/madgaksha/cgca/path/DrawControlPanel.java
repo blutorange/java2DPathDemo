@@ -3,6 +3,7 @@ package de.homelab.madgaksha.cgca.path;
 import java.awt.FlowLayout;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,6 +26,7 @@ class DrawControlPanel extends JPanel {
 	private final EditCanvas canvas;
 	private final MainFrame frame;
 	public DrawControlPanel(final EditCanvas canvas, final MainFrame frame) {
+		super();
 		this.canvas = canvas;
 		this.frame = frame;
 
@@ -38,7 +40,7 @@ class DrawControlPanel extends JPanel {
 		final JButton btnText = new JButton("load texture..."); //$NON-NLS-1$
 		final JCheckBox cbClose = new JCheckBox("close"); //$NON-NLS-1$
 		final JCheckBox cbFill = new JCheckBox("fill"); //$NON-NLS-1$
-		final JFileChooser fcText = new JFileChooser("Load texture"); //$NON-NLS-1$
+		final JFileChooser fcText = new JFileChooser("load texture"); //$NON-NLS-1$
 		final JComboBox<EWindingRule> selWRule = new JComboBox<>(EWindingRule.values());
 
 		setLayout(new FlowLayout());
@@ -96,8 +98,10 @@ class DrawControlPanel extends JPanel {
 		cbFill.addActionListener((final ActionEvent event) -> {
 			SWUtil.srcAs(event, JCheckBox.class).ifPresent(cb -> canvas.setFillPath(cb.isSelected()));
 		});
-		selWRule.addActionListener((final ActionEvent event) -> {
-			SWUtil.cboxAs(event, EWindingRule.class).ifPresent(windingRule -> canvas.setWindingRule(windingRule));
+		selWRule.addItemListener((final ItemEvent event) -> {
+			SWUtil.cboxSelAs(event, EWindingRule.class).ifPresent(windingRule -> {
+				canvas.setWindingRule(windingRule);
+			});
 		});
 		selWRule.setSelectedItem(canvas.getWindingRule());
 	}
