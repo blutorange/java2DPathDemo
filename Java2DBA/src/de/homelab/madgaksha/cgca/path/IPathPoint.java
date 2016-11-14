@@ -18,6 +18,11 @@ public interface IPathPoint extends ListModel<IKeyFramedPoint>, ListSelectionMod
 
 	@Override
 	public abstract boolean equals(Object o);
+	default boolean equalsIPathPointSpatially(IPathPoint o) {
+		if (o == null)
+			return false;
+		return getPointX() == o.getPointX() && getPointY() == o.getPointY();
+	}
 	@Override
 	public abstract int hashCode();
 }

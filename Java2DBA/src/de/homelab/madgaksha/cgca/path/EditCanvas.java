@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.ListModel;
-
 class EditCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
 	private final static float POINT_RADIUS = 5f;
@@ -227,7 +224,7 @@ class EditCanvas extends Canvas {
 	}
 
 	private void drawPathPoint(final Graphics2D g2d, final IPathPoint pp, final boolean highlight) {
-		if (pp.equals(list.getSelectedPoint()))
+		if (list.getSelectedPoint().map(p -> pp.equalsIPathPointSpatially(p)).orElse(Boolean.FALSE))
 			g2d.setColor(highlight ? Color.RED : Color.GREEN);
 		else
 			g2d.setColor(highlight ? Color.BLUE : Color.BLACK);			
@@ -281,8 +278,7 @@ class EditCanvas extends Canvas {
 		case PATH_BUILD:
 			selectedPoint = null;
 			selectedPath = null;
-			list.setModel(DummyModel.INSTANCE);
-			list.setSelectionModel(new DefaultListSelectionModel());
+			list.forNothing();
 			break;
 		case POINT_EDIT:
 			pathBuilder = null;
@@ -310,27 +306,20 @@ class EditCanvas extends Canvas {
 	}
 
 	public void addKeyFrame() {
-		final ListModel<?> model = list.getModel();
-		if (model instanceof IPathPoint) {
-			final IPathPoint p = (IPathPoint)model;
-			p.addKeyFrame();
-		}
+		list.getSelectedPoint().ifPresent(p -> p.addKeyFrame());
 	}
 
 	public void setKeyFrame(final float f) {
-		final ListModel<?> model = list.getModel();
-		if (model instanceof IPathPoint) {
-			final IPathPoint p = (IPathPoint)model;
-			p.setTime(f);
-		}
+		list.getSelectedPoint().ifPresent(p -> p.setTime(f)); 
 	}
 
 	public void removeKeyFrame() {
-		final ListModel<?> model = list.getModel();
-		if (model.getSize() > 1 && list.getSelectedIndex() >= 0 && model instanceof IPathPoint) {
-			((IPathPoint)model).removeKeyFrame();
+		if (list.modelSize() <= 1 || list.getSelectedIndex() < 0)
+			return;
+		list.getSelectedPoint().ifPresent(p -> {
+			p.removeKeyFrame();
 			list.clearSelection();
-		}
+		}); 
 	}
 
 	public AnimCanvas getAnimationCanvas() {

@@ -1,5 +1,7 @@
 package de.homelab.madgaksha.cgca.path;
 
+import java.util.Optional;
+
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -21,13 +23,17 @@ class TimeList extends JList<IKeyFramedPoint> {
 		this.selectedPoint = selectedPoint;
 	}
 	public void forNothing() {
-			setModel(DummyModel.INSTANCE);
-			setSelectionModel(new DefaultListSelectionModel());
+		selectedPoint = null;
+		setModel(DummyModel.INSTANCE);
+		setSelectionModel(new DefaultListSelectionModel());
 	}
 	/**
-	 * @return the selectedPoint
+	 * @return the selectedPoint. Null when there is none selected.
 	 */
-	public IPathPoint getSelectedPoint() {
-		return selectedPoint;
-	}	
+	public Optional<IPathPoint> getSelectedPoint() {
+		return Optional.ofNullable(selectedPoint);
+	}
+	public int modelSize() {
+		return getModel().getSize();
+	}
 }
