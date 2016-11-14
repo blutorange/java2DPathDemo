@@ -30,7 +30,17 @@ public enum EInterpolation {
 		public float apply(final float alpha) {
 			return (float)Math.pow(alpha, 1f/3f);
 		}
+	},
+	POWER_HAT {
+		@Override
+		public float apply(final float alpha) {
+			return 16f*alpha*alpha*(alpha-1f)*(alpha-1f);
+		}		
 	}
+	
 	;
 	public abstract float apply(float alpha);
+	public String toString() {
+		return this.name().replace('_', ' ');
+	}
 }
