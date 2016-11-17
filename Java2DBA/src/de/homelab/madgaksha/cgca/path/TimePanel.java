@@ -52,7 +52,7 @@ class TimePanel extends JPanel {
 		Arrays.sort(ipolValues,
 				(final EInterpolation o1, final EInterpolation o2) -> o1.toString().compareTo(o2.toString()));
 		selInter = new JComboBox<EInterpolation>(ipolValues);
-		selInter.setSelectedItem(EInterpolation.LINEAR);
+		selInter.setSelectedItem(EInterpolation.POWER_HAT);
 
 		setPreferredSize(new Dimension(200,-1));
 		timeControlPanel.add(btnAddTime, cons);

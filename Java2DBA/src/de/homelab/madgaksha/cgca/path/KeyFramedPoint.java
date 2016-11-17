@@ -9,7 +9,7 @@ public class KeyFramedPoint implements IKeyFramedPoint {
 		this.x = x;
 		this.y = y;
 		this.time = time;
-		this.interpolation = EInterpolation.LINEAR;
+		this.interpolation = EInterpolation.POWER_HAT;
 		this.point = point;
 	}
 

@@ -34,12 +34,13 @@ public enum EInterpolation {
 	POWER_HAT {
 		@Override
 		public float apply(final float alpha) {
-			return 16f*alpha*alpha*(alpha-1f)*(alpha-1f);
-		}		
+			return 4f*alpha*alpha*(0.5f*alpha-1f)*(0.5f*alpha-1f);
+		}
 	}
-	
+
 	;
 	public abstract float apply(float alpha);
+	@Override
 	public String toString() {
 		return this.name().replace('_', ' ');
 	}

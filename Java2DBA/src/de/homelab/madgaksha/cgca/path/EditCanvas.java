@@ -227,7 +227,7 @@ class EditCanvas extends Canvas {
 		if (list.getSelectedPoint().map(p -> pp.equalsIPathPointSpatially(p)).orElse(Boolean.FALSE))
 			g2d.setColor(highlight ? Color.RED : Color.GREEN);
 		else
-			g2d.setColor(highlight ? Color.BLUE : Color.BLACK);			
+			g2d.setColor(highlight ? Color.BLUE : Color.BLACK);
 		g2d.fill(new Ellipse2D.Float(pp.getPointX() - POINT_RADIUS, pp.getPointY()-POINT_RADIUS, 2f*POINT_RADIUS,2f*POINT_RADIUS));
 		g2d.drawString(String.format("%s(%.01f,%.01f)", pp.getLabel(), pp.getPointX(), pp.getPointY()), pp.getPointX(), //$NON-NLS-1$
 				pp.getPointY());
@@ -310,7 +310,7 @@ class EditCanvas extends Canvas {
 	}
 
 	public void setKeyFrame(final float f) {
-		list.getSelectedPoint().ifPresent(p -> p.setTime(f)); 
+		list.getSelectedPoint().ifPresent(p -> p.setTime(f));
 	}
 
 	public void removeKeyFrame() {
@@ -319,7 +319,7 @@ class EditCanvas extends Canvas {
 		list.getSelectedPoint().ifPresent(p -> {
 			p.removeKeyFrame();
 			list.clearSelection();
-		}); 
+		});
 	}
 
 	public AnimCanvas getAnimationCanvas() {
