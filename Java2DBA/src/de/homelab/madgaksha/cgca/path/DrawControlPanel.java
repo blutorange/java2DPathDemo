@@ -76,7 +76,8 @@ class DrawControlPanel extends JPanel {
 		});
 		btnChange.addActionListener((final ActionEvent actionEvent) -> {
 			canvas.setMode(EMode.PATH_BUILD);
-			canvas.setMode(EMode.POINT_EDIT);		});
+			canvas.setMode(EMode.POINT_EDIT);
+		});
 		btnPlayAnim.addActionListener((final ActionEvent actionEvent) -> {
 			playAnimation();
 		});
